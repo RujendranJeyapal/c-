@@ -48,9 +48,9 @@ class SBI:public Bank
                 return branch;
             }
 
-            string getInfo()
+            void getInfo()
             {
-                return "BankName -"+bankName+"\nEstablished Date -"+establishedDate+"\nBak Type -"+bankType+"\nBranch -"+branch;
+                std::cout<< "BankName -"+bankName+"\nEstablished Date -"+establishedDate+"\nBank Type -"+bankType+"\nBranch -"+branch+"\n";
             }
 
             string* getAvailableLoans()

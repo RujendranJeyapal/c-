@@ -11,10 +11,11 @@ class Bank:public Loan
       
        public:
            virtual string getBankName(){}
+       
            virtual string getEstablishedDate(){}
            virtual string getBankType(){}
            virtual string getBranch(){}
-           virtual string getInfo(){}      
+           virtual void getInfo(){}      
 
 };
 

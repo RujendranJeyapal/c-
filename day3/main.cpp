@@ -8,22 +8,22 @@ using std::cout;
 int main()
 {
     
-          int row,col;
-          cout<<"Enter row\n";
-          cin>>row;
+        int row,col;
+        cout<<"Enter row\n";
+        cin>>row;
 
-         cout<<"\nEnter colums\n";
-         cin>>col;
+        cout<<"\nEnter colum\n";
+        cin>>col;
 
-         int **city=(int**)malloc(row*sizeof(int*));
+        int **city=(int**)malloc(row*sizeof(int*));
  
-         for(int i=0; i<row; i++)
-         {
+        for(int i=0; i<row; i++)
+        {
              city[i]=(int*)malloc(col*sizeof(int));  
-         }
+        }
 
-         for( int i=0;i<row;i++ )
-         {
+        for( int i=0;i<row;i++ )
+        {
               for( int j=0;j<col;j++ )
               {
                   cin>>city[i][j];

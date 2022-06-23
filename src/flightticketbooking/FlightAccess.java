@@ -62,6 +62,11 @@ public class FlightAccess
 		            	     try
 		            	     {
 		            	       
+		            	    	  System.out.println("Businees Class Alone Flights are");
+		            	    	    List<String> businessClassAloneFlights=callDriver.getBusinessClassAloneFlights();
+		            	    	    System.out.println( businessClassAloneFlights );
+		            	        
+		            	    	 
 		            	       System.out.println("Enter Source");
 		            	       String source=input.nextLine();
 		            	       
@@ -80,13 +85,13 @@ public class FlightAccess
 		            	    	    System.out.println("Flights of your source and destinations are:");
 		            	    	    System.out.println(flightLists);
 		            	    	    
-		            	    	    System.out.println("Businees Class Alone Flights are");
-		            	    	    List<String> businessClassAloneFlights=callDriver.getBusinessClassAloneFlights();
-		            	    	    System.out.println( businessClassAloneFlights );
-		            	       
+		            	    	  
 		            	       
 		            	            System.out.println("Choose Flight Number");
 		            	            String flightNumber=input.nextLine();
+		            	            
+		            	          if( flightLists.contains(flightNumber) )
+		            	          {
 		            	            
 		            	            System.out.println("Do you want to meal\nPress 1-->yes\nPress 2-->No");
            	            	        int choice=input.nextInt();
@@ -126,7 +131,7 @@ public class FlightAccess
            	            	        input.nextLine();
            	            	        
            	            	       
-           	            	        if( classType==2 )
+           	            	        if( classType==2  || flightClass=="Business" )
            	            	        {   
            	            	        	   flightClass="Business";
            	            	               System.out.println( flight.getBusinessSeats() );
@@ -163,7 +168,8 @@ public class FlightAccess
 		            	            		
 		            	            		System.out.println("Enter Address");
 		            	            		String address=input.nextLine();
-		            	            		
+		            	            		while(true)
+		            	            		{
 		            	            		System.out.println("Choose the Sheet Number");
 		            	            		String seatNumber=input.nextLine();
 		            	            		
@@ -176,10 +182,13 @@ public class FlightAccess
 		            	            	     passenger.setSeat( seatNumber ); 
 		            	            	     
 		            	            	     passengers.put(seatNumber,passenger);
+		            	            	     break;
 		            	            		}
 		            	            		else
 		            	            		{
 		            	            			System.out.println("This Seat is already filled or This seat is not here. so Enter correct Seat Number");
+		            	            		}
+		            	            		
 		            	            		}
 		            	            		
 		            	            	}
@@ -190,7 +199,7 @@ public class FlightAccess
 		            	            	{
 		            	            	     System.out.println("Pay the amount "+ticketAmount);
 		            	            	     double pay=input.nextDouble();
-		            	            	     
+		            	            	     input.nextLine();
 		            	            	     if( pay==ticketAmount )
 		            	            	     {
 		            	            	    	 Ticket ticket=new Ticket( callDriver.generateBookId(),flightNumber,source,destination,
@@ -209,9 +218,17 @@ public class FlightAccess
 		            	            	     }
 		            	            	     
 		            	            	}   
+		            	            	
+		            	             
 		            	            	     
 		            	              }
-		            	              
+		            	          
+		            	           else
+	  		            	       {
+	  		            	    	   System.out.println("Choose the given flight number only");
+	  		            	       }
+		            	       }
+		            	      
 		            	              
 		            	     } 
 		            	      

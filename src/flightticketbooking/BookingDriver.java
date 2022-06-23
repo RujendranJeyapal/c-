@@ -49,7 +49,7 @@ public class BookingDriver
 	  
 	  public String generateBookId()
 	  {
-		  return "Ticket"+bookingId;
+		  return "Ticket"+bookingId++;
 	  }
 	  
 	  public double bookTicket(Map<String,Passenger> passengers,boolean mealPreference,Flight flight,String flightClass)
@@ -76,14 +76,7 @@ public class BookingDriver
 				
 				   businessSeat.setStatus("booked");
 				   
-				   callFile.updateFile(flight);
-				   
-				   callCache.storeFlight(flight);
-				  
-				  flight.setBusinessRate( amount+flight.getSugeRateForBusiness()   );
-				  
-				  callCache.addSeat(businessSeat);
-				  
+				   callCache.addSeat(businessSeat);
 				  
 				  
 			  }
@@ -96,14 +89,22 @@ public class BookingDriver
 					
 				   economySeat.setStatus("booked");
 				   
-				   callFile.updateFile(flight);
-				   
-				   callCache.storeFlight(flight);
-				   
-				  flight.setEconomyRate( amount+flight.getSugeRateForEconomy()   );
+				 
+				
 				  
 				  callCache.addSeat(economySeat);
 			  }
+			  
+			  callFile.updateFile(flight);
+			   
+			  callCache.storeFlight(flight);
+			  
+			  flight.setBusinessRate( amount+flight.getSugeRateForBusiness()   );
+			  
+			   
+			  flight.setEconomyRate( amount+flight.getSugeRateForEconomy()   );
+			  
+			  
 			  
 			  if( mealPreference )
 			  {
@@ -326,7 +327,7 @@ public class BookingDriver
   	     
   	     callFile.updateFileA113(flightA113);
   	     
-  	     Flight flightA114=new Flight( "A114","CHENNAI","DELHI",true,false,
+  	     Flight flightA114=new Flight( "A114","CHENNAI","DELHI",false,true,
  	    		 1000,2000,100,200,null,businessClassSeats);
   	     
   	     callFile.updateFileA114(flightA114);

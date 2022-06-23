@@ -20,7 +20,7 @@ public class FlightTicketManagement
        
       public  void printSeatsHaveMeals(String flightNo)
       {
-    	  if( bookedTickets!=null )
+    	  if( !bookedTickets.isEmpty() )
     	  {
     	     for( String id:bookedTickets.keySet() )
     	     {

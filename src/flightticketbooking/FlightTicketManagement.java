@@ -20,6 +20,8 @@ public class FlightTicketManagement
        
       public  void printSeatsHaveMeals(String flightNo)
       {
+    	  if( bookedTickets!=null )
+    	  {
     	     for( String id:bookedTickets.keySet() )
     	     {
     	    	 Ticket ticket=bookedTickets.get(id);
@@ -35,6 +37,12 @@ public class FlightTicketManagement
     	    	}
     	    	 
     	     }
+    	  }   
+    	  else
+    	  {
+    		    System.out.println("Tickets are not booked in this Flight");
+    	  }
+    	  
       }
        
 

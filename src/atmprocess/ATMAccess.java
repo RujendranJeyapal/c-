@@ -245,7 +245,7 @@ public class ATMAccess
 						    
 						    int size=transList.size();
 						    
-						    String temp="";
+						   
 						    
 						    if( transList.isEmpty() )
 						    {
@@ -256,18 +256,18 @@ public class ATMAccess
 						    {
 						    	   for( int i=0;i<size;i++ )
 						    	   {
-						    		   System.out.println(transList.get(i));
+						    		   System.out.println( transList.get(i) );
 						    	   }
 						    }
 						    
 						    else
 						    {
-						    	   for( int i=size-1;i>=size-10;i-- )
+						    	   for( int i=size-10;i<size;i++ )
 						    	   {
-						    		   temp=transList.get(i)+"\n"+temp;	  
+						    		   System.out.println( transList.get(i) );
 						    	   }
 						    	   
-						    	      System.out.println( temp );
+						    	      
 						    }
 						    
 						    

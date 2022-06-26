@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class FileStorage 
@@ -14,7 +16,7 @@ public class FileStorage
      
 	  private File atmFile=new File("ATM.txt");
 	  private File customerFile=new File( "Customer.txt" );
-	  
+	  private File transactionNoFile=new File("LastTransactionNumber.txt");
 	  
 	  public void writeATMFile(ATM atm)
 	  {
@@ -36,6 +38,8 @@ public class FileStorage
 		     }
 		         
 	  }
+	  
+	  
 	  
 	  public ATM readATMFile()
 	  {
@@ -88,6 +92,51 @@ public class FileStorage
 		     return atm;
 	  }
 	  
+	  public void createTransFile(File transFile)
+	  {
+		  try
+		  {
+		      if( !transFile.exists() )
+		      {
+			       transFile.createNewFile();
+			       
+			       FileWriter writer= new FileWriter( transFile );
+			       writer.write("Transaction Number\t\t\tDescription\t\t\tTransaction Type\t\t\tAmount\t\t\tClosing Balance\n");
+			       writer.close();
+		      }
+		  }
+		  catch( IOException ex )
+	      {
+	    	   ex.printStackTrace();
+	      }
+		
+	  }
+	  
+	  public void addTransaction(Transaction transaction)
+	  {
+		  File transFile=new File( transaction.getAccountNo()+".txt" );
+		  createTransFile(transFile);
+		  
+		  try
+		  (
+			   FileWriter write=new FileWriter(transFile,true);	 
+			   BufferedWriter buffer=new BufferedWriter( write );  
+		  )
+		  {
+		       buffer.append(transaction.getTransactionNumber()+"\t\t\t\t"+
+		                      transaction.getDescription()+"\t\t\t\t"+
+		    		          transaction.getTransactionType()+"\t\t\t\t"+
+		                      transaction.getAmount()+"\t\t\t\t"+
+		    		          transaction.getClosingBalance()+"\n");
+		   
+		       storeTransNumber( transaction.getTransactionNumber() );
+		  }
+		  catch( IOException ex )
+	      {
+	    	   ex.printStackTrace();
+	      }
+		  
+	  }
 	  
 	  public void addCustomer(Map<Long,Customer> customerInfo)
 	  {
@@ -220,6 +269,77 @@ public class FileStorage
 		   } 
 		     
 		     return output;
+	  }
+	  
+	  public void storeTransNumber(int transactionNumber)
+	  {
+		  try
+		  (
+		    FileWriter writer=new FileWriter(transactionNoFile);
+		  )
+		  {
+			  writer.write(transactionNumber+"");
+		  }
+		  catch( IOException ex )
+	      {
+	    	   ex.printStackTrace();
+	      }
+	  }
+	  
+	  public List<String> readTransaction(long accountNo)
+	  {
+		  List<String> transList=new ArrayList<>();
+		  
+		  File transFile=new File( accountNo+".txt" );
+		  
+		  if( transFile.exists() )
+		  {
+			  try
+		      (
+		         FileReader reader=new FileReader(transFile);
+		    	 BufferedReader buffer=new BufferedReader( reader );	  
+		      )
+		      {
+			       String temp=buffer.readLine();
+			         temp=buffer.readLine();
+			         
+			        while( temp!=null )
+			        {
+			        	transList.add(temp);
+			        	 temp=buffer.readLine();
+			        }
+			         
+		      }
+		      catch( IOException ex )
+	          {
+	    	      ex.printStackTrace();
+	          }
+		  }
+		  
+		  return transList;
+	  }
+	  
+	  public int readTransNumber()
+	  {
+		  int transactionNo=1001;
+		  
+		  if( transactionNoFile.exists() )
+		  {  
+		      try
+		      (
+		         FileReader reader=new FileReader(transactionNoFile);
+		    	 BufferedReader buffer=new BufferedReader( reader );	  
+		      )
+		      {
+			           transactionNo=Integer.parseInt( buffer.readLine() );
+		      }
+		      catch( IOException ex )
+	          {
+	    	      ex.printStackTrace();
+	          }
+		  }   
+		  
+		  return transactionNo;
 	  }
 	  
 	  public boolean isCusFileExist()

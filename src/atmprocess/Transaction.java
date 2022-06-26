@@ -2,20 +2,22 @@ package atmprocess;
 
 public class Transaction 
 {
-       private int accountNo;
+       private long accountNo;
        private int transactionNumber;
+       private String description;
        private String transactionType;
        private double amount;
        private double closingBalance;
        
        
-	   public Transaction(int accountNo, int transactionNumber, String transactionType, 
+	   public Transaction(long accountNo, int transactionNumber, String description , String transactionType, 
 			   double amount,
 			double closingBalance) 
 	   {
 	
 		this.accountNo = accountNo;
 		this.transactionNumber = transactionNumber;
+		this.description=description;
 		this.transactionType = transactionType;
 		this.amount = amount;
 		this.closingBalance = closingBalance;
@@ -23,7 +25,7 @@ public class Transaction
 	   }
 
 
-	   public int getAccountNo() 
+	   public long getAccountNo() 
 	   {
 		  return accountNo;
 	   }
@@ -34,8 +36,13 @@ public class Transaction
 		   return transactionNumber;
 	   }
 
+	   public String getDescription()
+	   {
+		   return description;
+	   }
 
-	   public String getTransactionType() 
+
+	public String getTransactionType() 
 	   {
 		   return transactionType;
 	   }

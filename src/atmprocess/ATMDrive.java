@@ -1,5 +1,7 @@
 package atmprocess;
 
+import java.util.List;
+
 public class ATMDrive
 {
 	    ATM atm=ATM.OPERATEATM;
@@ -7,7 +9,7 @@ public class ATMDrive
 	    private FileStorage callFile=new FileStorage();
 	    
 	    ATMManagement callCache=new ATMManagement();
-	    
+	    private int transactionNo;
 	    
 	    
 	    private void nullCheck(Object object,String value)throws CustomException
@@ -42,7 +44,7 @@ public class ATMDrive
 	    public Customer getCustomer(long accNo)throws CustomException 
 	    {
 	    	Customer customer=callCache.getCustomer(accNo);
-	    	nullCheck(customer,"Account");
+	    	nullCheck(customer,"Account Number");
 	    	return customer;
 	    }
 	    
@@ -57,7 +59,7 @@ public class ATMDrive
 	    }
 	    
 	    
-	    public boolean isAccHere(long accountNo,int pinNo) throws CustomException
+	    public boolean pinNumberCheck(long accountNo,int pinNo) throws CustomException
 	    {
 	    	  if( getCustomer(accountNo).getPinNumber() == pinNo )
 	    	  {
@@ -67,10 +69,9 @@ public class ATMDrive
 	    	  return false;
 	    }
 	    
-	    
-	    public boolean isValidAmount(int amount,long accountNo) throws CustomException
+	    public boolean isValidAmountForTransaction(int amount,long accountNo) throws CustomException
 	    {
-	    	if( amount<100 && amount>10000 )
+	    	if( amount<100 || amount>10000 )
 	    	{
 	    		throw new CustomException( "Amount limit should between 100 and 10000..!" );
 	    	}
@@ -80,12 +81,47 @@ public class ATMDrive
 	    		throw new CustomException( "Amount limit exceed..!" );
 	    	}
 	    	
+	    	return true;
+	    }
+	    		    
+	    
+	    public boolean isValidAmount(int amount,long accountNo) throws CustomException
+	    {
+	    	isValidAmountForTransaction(amount,accountNo);
+	    	
 	    	if( amount%100!=0 )
 	    	{
 	    		throw new CustomException( "Amount should only multiples of 2000,500 & 100" );
 	    	}
 	    	
 	    	return true;
+	    }
+	    
+	    public boolean transferMoney(double amount,long fromAccNo,long toAccNo) throws CustomException
+	    {
+	    	
+	    	if( fromAccNo==toAccNo )
+	    	{
+	    		throw new CustomException( "Don't self Transfer" );
+	    	}
+	    	
+	    	Customer sender=getCustomer( fromAccNo );
+	    	Customer receiver=getCustomer( toAccNo );
+	    	
+	    	sender.setAccountBalance( sender.getAccountBalance()-amount );
+	    	receiver.setAccountBalance( receiver.getAccountBalance()+amount );
+	    	
+	    	addCustomer( sender );
+	    	addCustomer( receiver );
+	    	
+	    	Transaction senderTrans=new Transaction( fromAccNo,transactionNo++,"Transfer to "+toAccNo,"Debit",amount,sender.getAccountBalance() );
+	    	Transaction receiverTrans=new Transaction( toAccNo,transactionNo++,"Transfer from "+fromAccNo,"Credit",amount,receiver.getAccountBalance() );
+	    	
+	    	callFile.addTransaction(senderTrans);
+	        callFile.addTransaction(receiverTrans);
+	        
+	        return true;
+	    	
 	    }
 	   
 	
@@ -94,6 +130,16 @@ public class ATMDrive
 	    	     callCache.setCustomersMap( callFile.readCustomerFile() );
 	    	   
 	    	     atm=callFile.readATMFile();
+	    	     
+	    	     transactionNo=callFile.readTransNumber();
+	    }
+	    
+	    
+	    public List<String> getTranasaction(long accountNo) throws CustomException
+	    {
+	    	  getCustomer(accountNo);
+	    	  
+	    	  return callFile.readTransaction(accountNo);
 	    }
 	
 	    

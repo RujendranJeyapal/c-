@@ -186,9 +186,9 @@ public class ATMAccess
 		        	        System.out.println("Enter the amount to withdrawn(Amount should be above 100 and below 10000)");
 		        	        int amount=input.nextInt(); 
 					
-						    if( callDrive.isValidAmount(amount, accountNo) )
+						    if( callDrive.isValidAmount(amount, accountNo) && callDrive.withDrawMoney(amount, accountNo) )
 						    {
-							
+							        System.out.println("WithDraw Amount Successfully");
 						    }
 					     }		        	     
 		        	     catch (CustomException ex) 
@@ -241,7 +241,7 @@ public class ATMAccess
 					    {
 						    List< String > transList= callDrive.getTranasaction(accountNo);
 						    
-						    System.out.println("Transaction Number\t\t\tDescription\t\t\tTransaction Type\t\t\tAmount\t\t\tClosing Balance");
+						   
 						    
 						    int size=transList.size();
 						    
@@ -252,8 +252,11 @@ public class ATMAccess
 						    	System.out.println("No Transaction");
 						    }
 						    
+						    
+						    
 						    else if( size<=10 )
 						    {
+						    	 System.out.println("Transaction Number\t\t\tDescription\t\t\tTransaction Type\t\t\tAmount\t\t\tClosing Balance");
 						    	   for( int i=0;i<size;i++ )
 						    	   {
 						    		   System.out.println( transList.get(i) );
@@ -262,6 +265,8 @@ public class ATMAccess
 						    
 						    else
 						    {
+						    	
+						    	 System.out.println("Transaction Number\t\t\tDescription\t\t\tTransaction Type\t\t\tAmount\t\t\tClosing Balance");
 						    	   for( int i=size-10;i<size;i++ )
 						    	   {
 						    		   System.out.println( transList.get(i) );

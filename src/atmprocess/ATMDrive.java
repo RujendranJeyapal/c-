@@ -97,6 +97,154 @@ public class ATMDrive
 	    	return true;
 	    }
 	    
+	    private boolean ATMCheck( int noOf2000,int noOf500,int noOf100 ) throws CustomException
+	    {  
+	    	
+	    	if( noOf2000>atm.getNoOf2000()  || noOf500>atm.getNoOf500()  || noOf100>atm.getNoOf100() )
+	    	{
+	    		      throw new CustomException( "ATM has no money" );
+	    	}
+	    	
+	    	
+	    	return true;
+	    }
+	    
+	    public boolean withDrawMoney(double amount,long accNo) throws CustomException
+	    {
+	    	
+	    	  if( amount<=5000 )
+	    	  {
+	    		  withDrawGreaterThan5000(amount,accNo);
+	    	  }
+	    	  
+	    	  else
+	    	  {
+	    		  withDrawLessThan5000(amount,accNo);
+	    	  }
+	    	
+	    	  return true;
+	    }
+	    
+	    
+	    private boolean withDrawLessThan5000(double amount,long accNo) throws CustomException
+	    {
+	    	int noOf2000=0;
+	    	int noOf500=0;
+	    	int noOf100=0;
+	    	
+	    	double temp=amount;
+	    	
+	    	
+	    	if( temp>5000 )
+	    	{
+	    		  
+	    		for( int i=0;i<2;i++ )
+	    		{
+	    			++noOf2000;
+	    			temp-=2000;
+	    		}
+	    		
+	    		for( int i=0;i<2;i++ )
+	    		{
+	    			++noOf500;
+	    			temp-=500;
+	    		}
+	    		
+	    		for( int i=0;i<10;i++ )
+	    		{
+	    			++noOf100;
+	    			temp-=100;
+	    			
+	    			  if( temp==0 )
+	    			  {
+	    				  break;
+	    			  }
+	    			
+	    		}		
+	    		
+	    		
+	    		while(  temp>0 )
+	    		{
+	    			
+	    			 ++noOf500;  
+	    			temp-=500;
+	    		}
+	    			
+	    	    ATMCheck( noOf2000,noOf500,noOf100 );
+   		       
+   		        Customer customer=getCustomer( accNo );
+   		       
+   		        customer.setAccountBalance( customer.getAccountBalance()-amount  );
+   		       
+   		        addCustomer( customer );
+   		       
+   		        feedMoneyToATM( -noOf2000, -noOf500, -noOf100);
+   		        
+   		        Transaction transaction=new Transaction( accNo,transactionNo++,"Cash Withdrawal","Debit",amount,customer.getAccountBalance() );
+   		        
+   		        callFile.addTransaction(transaction);
+	    		
+	    	}
+	    	
+	    	    return true;
+	    	
+	    	
+	    }
+	    
+	    private boolean withDrawGreaterThan5000(double amount,long accNo) throws CustomException
+	    {
+	    	int noOf2000=0;
+	    	int noOf500=0;
+	    	int noOf100=0;
+	    	
+	    	double temp=amount;
+	    	
+	    	   if( temp<=5000 )
+	    	   {
+	    		       while(  temp>3000 )
+	    		       {
+	    		    	    ++noOf2000;
+	    		    	    temp-=2000;
+	    		       }
+	    		       
+	    		       while( temp>1000 )
+	    		       {
+	    		    	   ++noOf500;
+	    		    	   temp-=500;
+	    		       }
+	    		       
+	    		       while( temp>0 )
+	    		       {
+	    		    	   ++noOf100;
+	    		    	   temp-=100;
+	    		       }
+	    		    
+	    		       
+	    		       ATMCheck( noOf2000,noOf500,noOf100 );
+	    		       
+	    		       Customer customer=getCustomer( accNo );
+	    		       
+	    		       customer.setAccountBalance( customer.getAccountBalance()-amount  );
+	    		       
+	    		       addCustomer( customer );
+	    		       
+	    		       feedMoneyToATM( -noOf2000, -noOf500, -noOf100);
+	    		       
+	    		       Transaction transaction=new Transaction( accNo,transactionNo++,"Cash Withdrawal","Debit",amount,customer.getAccountBalance() );
+	      		        
+	      		       callFile.addTransaction(transaction);
+	    		       
+	    		   
+	    	   }
+	    	   
+	    	   
+	    	 
+	    	
+	    	
+	    	return true;
+	    }
+	    
+	    
 	    public boolean transferMoney(double amount,long fromAccNo,long toAccNo) throws CustomException
 	    {
 	    	

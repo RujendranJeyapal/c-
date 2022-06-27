@@ -112,30 +112,35 @@ public class FileStorage
 		
 	  }
 	  
-	  public void addTransaction(Transaction transaction)
+	  public void addTransaction(List<Transaction> transactionList)
 	  {
-		  File transFile=new File( transaction.getAccountNo()+".txt" );
-		  createTransFile(transFile);
 		  
-		  try
-		  (
-			   FileWriter write=new FileWriter(transFile,true);	 
-			   BufferedWriter buffer=new BufferedWriter( write );  
-		  )
+		  for( int i=0;i<transactionList.size();i++ )
 		  {
-		       buffer.append(transaction.getTransactionNumber()+"\t\t\t\t"+
-		                      transaction.getDescription()+"\t\t\t\t"+
-		    		          transaction.getTransactionType()+"\t\t\t\t"+
-		                      transaction.getAmount()+"\t\t\t\t"+
-		    		          transaction.getClosingBalance()+"\n");
-		   
-		       storeTransNumber( transaction.getTransactionNumber() );
-		  }
-		  catch( IOException ex )
-	      {
-	    	   ex.printStackTrace();
-	      }
+			   Transaction transaction=transactionList.get(i);
+			  
+		       File transFile=new File( transaction.getAccountNo()+".txt" );
+		       createTransFile(transFile);
 		  
+		       try
+		       (
+			        FileWriter write=new FileWriter(transFile,true);	 
+			        BufferedWriter buffer=new BufferedWriter( write );  
+		       )
+		       {
+		               buffer.append(transaction.getTransactionNumber()+"\t\t\t\t"+
+		                         transaction.getDescription()+"\t\t\t\t"+
+		    		             transaction.getTransactionType()+"\t\t\t\t"+
+		                         transaction.getAmount()+"\t\t\t\t"+
+		    		             transaction.getClosingBalance()+"\n");
+		   
+		                storeTransNumber( transaction.getTransactionNumber() );
+		       }
+		       catch( IOException ex )
+	           {
+	    	         ex.printStackTrace();
+	           }
+		  }
 	  }
 	  
 	  public void addCustomer(Map<Long,Customer> customerInfo)

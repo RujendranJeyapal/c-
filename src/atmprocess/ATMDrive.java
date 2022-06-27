@@ -1,14 +1,16 @@
 package atmprocess;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ATMDrive
+public class ATMDrive extends Thread
 {
-	    ATM atm=ATM.OPERATEATM;
+	    private ATM atm=ATM.OPERATEATM;
            
 	    private FileStorage callFile=new FileStorage();
 	    
-	    ATMManagement callCache=new ATMManagement();
+	    private ATMManagement callCache=new ATMManagement();
+	    private List<Transaction> transactionList=new ArrayList<>();
 	    private int transactionNo;
 	    
 	    
@@ -20,6 +22,20 @@ public class ATMDrive
 	    	   }
 	    }
 	    
+	    public void run()
+	    {
+	    	try 
+	    	{
+				sleep(5000);
+				callFile.addTransaction(transactionList);
+				transactionList=new ArrayList<>();
+				interrupt();
+			}
+	    	catch (InterruptedException e) 
+	    	{
+				e.printStackTrace();
+			}
+	    }
 	    
 	
 	    public void feedMoneyToATM(int countOf2000,int countOf500,int countOf100)
@@ -182,7 +198,9 @@ public class ATMDrive
    		        
    		        Transaction transaction=new Transaction( accNo,transactionNo++,"Cash Withdrawal","Debit",amount,customer.getAccountBalance() );
    		        
-   		        callFile.addTransaction(transaction);
+   		        transactionList.add(transaction);
+   		        
+   		        start();
 	    		
 	    	}
 	    	
@@ -232,9 +250,9 @@ public class ATMDrive
 	    		       
 	    		       Transaction transaction=new Transaction( accNo,transactionNo++,"Cash Withdrawal","Debit",amount,customer.getAccountBalance() );
 	      		        
-	      		       callFile.addTransaction(transaction);
+	      		       transactionList.add(transaction);
 	    		       
-	    		   
+	    		       start();
 	    	   }
 	    	   
 	    	   
@@ -265,8 +283,10 @@ public class ATMDrive
 	    	Transaction senderTrans=new Transaction( fromAccNo,transactionNo++,"Transfer to "+toAccNo,"Debit",amount,sender.getAccountBalance() );
 	    	Transaction receiverTrans=new Transaction( toAccNo,transactionNo++,"Transfer from "+fromAccNo,"Credit",amount,receiver.getAccountBalance() );
 	    	
-	    	callFile.addTransaction(senderTrans);
-	        callFile.addTransaction(receiverTrans);
+	    	transactionList.add(senderTrans);
+	    	transactionList.add(receiverTrans);
+	    	
+	    	start();
 	        
 	        return true;
 	    	

@@ -142,10 +142,7 @@ public class ATMAccess
 	
 	void handleATMProcess(Scanner input,ATMDrive callDrive,long accountNo,int pinNo)
 	{
-		    boolean condition=true;
 		    
-		    while( condition )
-		    {
 		                 System.out.println("Press 1-->Check Balance\n"
 		                                  + "Press 2-->Withdraw Money\n"
 		                                  + "Press 3-->Transfer Money\n"
@@ -285,10 +282,10 @@ public class ATMAccess
 		        	     
 		           default:
 		        	     
-                         condition=false;
+                       
                          break;
                          
-		         }
+		         
 		                 
 		    }    
 	}

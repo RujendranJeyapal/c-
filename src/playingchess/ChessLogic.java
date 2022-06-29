@@ -11,8 +11,12 @@ import java.util.LinkedHashMap;
 public class ChessLogic 
 {
 	
-	 LinkedHashMap<String,String> chessBoard=new LinkedHashMap<>();
+	  private LinkedHashMap<String,String> chessBoard=new LinkedHashMap<>();
 	 
+	  private int whiteKingMovement=0;
+	  
+	  private int blackKingMovement=0;
+	  
 	  public void initialSetup()
 	  {
 		   chessBoard.put( "a8" , "B_R" );
@@ -102,34 +106,34 @@ public class ChessLogic
       public List<String> getMoves(String position) throws CustomException
       {
     	  
-    	  String coins=getCoins( position );
+    	  String coin=getCoins( position );
     	  	     
-    	  if(  coins.equals("W_P") )
+    	  if(  coin.equals("W_P") )
     	  {
     		     return getPawnMovesForWhite( position );    
     	  }
     	  
-    	  if( coins.equals("B_P") )
+    	  if( coin.equals("B_P") )
     	  {
     		     return getPawnMovesForBlack( position );
     	  }	  
     	
-    	  if( coins.endsWith("K") )
+    	  if( coin.endsWith("K") )
     	  {
-    		     return getKingMoves( position );
+    		     return getKingMoves( position,coin );
     	  }
     	  
-    	  if( coins.endsWith("Q") )
+    	  if( coin.endsWith("Q") )
     	  {
     		     return getQueenMoves( position );
     	  }
     	
-    	  if( coins.endsWith("N") )
+    	  if( coin.endsWith("N") )
     	  {
     		     return getKnightMoves( position );
     	  }
     	 
-    	  if( coins.endsWith("B" ) )
+    	  if( coin.endsWith("B" ) )
     	  {
     		    return getBishopMoves( position );
     	  }
@@ -137,6 +141,46 @@ public class ChessLogic
     	  return getRookMoves( position );
       }
       
+      
+      public void moveCoins( String source,String destination ) throws CustomException
+      {
+    	   String coin=getCoins( source );
+    	 
+    	   chessBoard.put( source," " );
+    	   chessBoard.put(destination, coin);
+    	 
+    	   if( coin.equals("W_K") )
+    	   {
+    		      if( destination.equals("g1") )
+    		      {
+    		    	   chessBoard.put("h1"," ");
+    		    	   chessBoard.put("f1","W_R");
+    		      } 	
+    		    
+    		      if( destination.equals("c1") )
+    		      {
+    		           chessBoard.put("a1"," ");
+   		    	       chessBoard.put("d1","W_R");
+    		      }
+    	   }
+    	 
+    	 
+    	   if( coin.equals("B_K") )
+    	   {
+    		       if( destination.equals("g8") )
+    		       {
+    		    	    chessBoard.put("h8"," ");
+    		    	    chessBoard.put("f8","W_R");
+    		       } 	
+    		    
+    		       if( destination.equals("c8") )
+    		       {
+    		    	    chessBoard.put("a8"," ");
+   		    	        chessBoard.put("d8","W_R");
+    		       }
+    	   }
+    	 
+      }
       
       
      
@@ -147,17 +191,27 @@ public class ChessLogic
     	     
 		     int row=Integer.parseInt( position.charAt(1)+"" ) +1;
 		     
-		     if( row<=8  && !isCoinHere( position,position.charAt(0)+""+row ) && !getCoins( position.charAt(0)+""+row ).startsWith("B")  )
+		     
+		     
+		     if(  isCoinNotHere( position,position.charAt(0)+""+row )   )
 		     {     			    	     
-	    	         movingPlaces.add( position.charAt(0)+""+row  );
-		     }   
-    	        
+	    	     movingPlaces.add( position.charAt(0)+""+row  );
+	    	     
+	    	     if(  position.endsWith("2") && isCoinNotHere( position,position.charAt(0)+""+(row+1) )  )
+ 	             {  	    	   
+ 	    	            movingPlaces.add( position.charAt(0) +""+(row+1) );
+ 	             }
+		     }              
     	     
-    	     if(  position.endsWith("2") )
-    	     {  	    	 
-  
-    	    	 movingPlaces.add( position.charAt(0) +""+(row+1) );
-    	     }
+             if(!position.startsWith("h")  && isCapturedCoinHere( position,(char)(position.charAt(0)+1)+""+row )  )
+             {
+            	 movingPlaces.add( (char)(position.charAt(0)+1) +""+row  );
+             }
+             
+             if( !position.startsWith("a")  && isCapturedCoinHere( position,(char)(position.charAt(0)-1) +""+row )  )
+             {
+                 movingPlaces.add( (char)(position.charAt(0)-1) +""+row  );
+             }
     	     
     	     return movingPlaces;
     	     
@@ -169,15 +223,25 @@ public class ChessLogic
 		    
 		    int row=Integer.parseInt( position.charAt(1)+"" ) -1;
 		    
-   	        if( row>=1  && !isCoinHere( position,position.charAt(0)+""+row ) && !getCoins( position.charAt(0)+""+row ).startsWith("W") )
+   	        if(  isCoinNotHere( position,position.charAt(0)+""+row )  )
    	        {
    	             movingPlaces.add( position.charAt(0)+""+row  );
-   	        }
-   	     
-   	        if(  position.endsWith("7") )
-   	        {
-   	        	movingPlaces.add( position.charAt(0) +""+(row-1) );
-   	        }
+   	             
+   	            if(  position.endsWith("7") && isCoinNotHere( position,position.charAt(0) +""+(row-1) ) )
+     	        {
+     	        	movingPlaces.add( position.charAt(0) +""+(row-1) );
+     	        }
+   	        }   
+   	        
+   	        if( !position.startsWith("h")  &&  isCapturedCoinHere( position,(char)(position.charAt(0)+1)+""+row )  )
+            {
+        	    movingPlaces.add( (char)(position.charAt(0)+1) +""+row  );
+            }
+         
+            if( !position.startsWith("a")  && isCapturedCoinHere( position,(char)(position.charAt(0)-1) +""+row )  )
+            {
+                movingPlaces.add( (char)(position.charAt(0)-1) +""+row  );
+            }
    	     
    	        return movingPlaces;
 		  
@@ -201,12 +265,17 @@ public class ChessLogic
 			  while( row>0 && row<=8 && col>='a' && col<='h' )
 			  {			     
 				  
-				  if( !isCoinHere( position,col+""+row  ) )
+				  if( !isCoinNotHere( position,col+""+row  ) )
 				  {
 					  break;
 				  }
 			      
 			       movingPlaces.add( col+""+row  );
+			       
+			      if( isCapturedCoinHere( position,col+""+row ) )
+			      {
+			         break;
+			      } 
 			       
 			       col+=colMoves[i] ;
 				  
@@ -236,12 +305,17 @@ public class ChessLogic
 			  while( row>0 && row<=8 && col>='a' && col<='h' )
 			  {			      
 			      
-				   if( !isCoinHere( position,col+""+row  ) )
+				   if( !isCoinNotHere( position,col+""+row  ) )
 				   {
 					   break;
 				   }
 				  
 			       movingPlaces.add( col+""+row  );
+			       
+			       if( isCapturedCoinHere( position,col+""+row ) )
+			       {
+			    	   break;
+			       }
 			       
 			       col+=colMoves[i] ;
 				  
@@ -270,10 +344,11 @@ public class ChessLogic
 			  
 			  int row=( Integer.parseInt( position.charAt(1)+"" )+rowMoves[i] );
 			  
-			  if( row>0 && row<=8 && col>='a' && col<='h' && !isCoinHere( position,col+""+row  ) )
+			  if( row>0 && row<=8 && col>='a' && col<='h' && isCoinNotHere( position,col+""+row  ) )
 			  {			         				  
-			       movingPlaces.add( col+""+row  );    
+			       movingPlaces.add( col+""+row  );    	       
 			  }
+
 			  
 		  }
 		  
@@ -281,7 +356,7 @@ public class ChessLogic
 		  
 	  }
 	  
-	  private List<String> getKingMoves( String position  ) throws CustomException
+	  private List<String> getKingMoves( String position ,String coin ) throws CustomException
 	  {
 		  List<String> movingPlaces=new ArrayList<>();
 		  
@@ -295,10 +370,68 @@ public class ChessLogic
 			  
 			  int row=( Integer.parseInt( position.charAt(1)+"" )+rowMoves[i] );
 			  
-			  if( row>0 && row<=8 && col>='a' && col<='h' && !isCoinHere( position,col+""+row  ) )
+			  if( row>0 && row<=8 && col>='a' && col<='h' && isCoinNotHere( position,col+""+row  ) )
 			  {			         
 			       movingPlaces.add( col+""+row  );    
 			  }
+			   
+		  }
+		  
+		  char col=position.charAt(0);
+		  
+		  int row=Integer.parseInt( position.charAt(1)+"");
+		  
+		  
+		  if(  coin.startsWith("W")  && whiteKingMovement==0   )
+		  {
+			  if( 
+				  chessBoard.get(  (char) (col+1)+""+row ).equals(" ") &&
+				  chessBoard.get(  (char) (col+2)+""+row ).equals(" ") &&
+				  chessBoard.get( "h1" ).equals("W_R")
+				    
+				)
+			  {
+				  movingPlaces.add( (char)  (col+2)+""+row  ); 
+			  }
+			  
+			  
+			  if( 
+				   chessBoard.get( (char)  (col-1)+""+row ).equals(" ") &&
+				   chessBoard.get( (char)  (col-2)+""+row ).equals(" ") &&
+				   chessBoard.get( (char)  (col-3)+""+row ).equals(" ") &&
+				   chessBoard.get( "a1" ).equals("W_R")
+					    
+			    )
+				{
+				   movingPlaces.add(  (char) (col-2)+""+row  ); 
+				}
+			  
+		  }
+		  
+		  
+		  if(  coin.startsWith("B")  && blackKingMovement==0   )
+		  {
+			  if( 
+				  chessBoard.get( (char)  (col+1)+""+row ).equals(" ") &&
+				  chessBoard.get( (char)  (col+2)+""+row ).equals(" ") &&
+				  chessBoard.get( "h8" ).equals("B_R")
+				    
+				)
+			  {
+				  movingPlaces.add(  (char) (col+2)+""+row  ); 
+			  }
+			  
+			  
+			  if( 
+				   chessBoard.get(  (char) (col-1)+""+row ).equals(" ") &&
+				   chessBoard.get(  (char) (col-2)+""+row ).equals(" ") &&
+				   chessBoard.get(  (char) (col-3)+""+row ).equals(" ") &&
+				   chessBoard.get( "a8" ).equals("B_R")
+					    
+			    )
+				{
+				   movingPlaces.add(  (char) (col-2)+""+row  ); 
+				}
 			  
 		  }
 		  
@@ -316,7 +449,7 @@ public class ChessLogic
 	  }
 	  
 	  
-	  public String getCoins( String position ) throws CustomException
+	  private String getCoins( String position ) throws CustomException
 	  {
              String coin=chessBoard.get(position);
     	  
@@ -328,16 +461,16 @@ public class ChessLogic
     	     return coin;
 	  }
 	  
-	  private boolean isCoinHere( String fromPosition , String toPosition ) throws CustomException
+	  private boolean isCoinNotHere( String fromPosition , String toPosition ) throws CustomException
 	  {
 		    
 		    
-		    if( getCoins( fromPosition ).startsWith( "W" ) && getCoins( toPosition ).startsWith("W")  )
+		    if(  chessBoard.get( fromPosition ).startsWith( "W" ) && chessBoard.get( toPosition ).startsWith("W")  )
 		    {
 		    	 return false;
 		    }
 		    
-		    if( getCoins( fromPosition ).startsWith( "B" ) && getCoins( toPosition ).startsWith("B")  )
+		    if( chessBoard.get( fromPosition ).startsWith( "B" ) && chessBoard.get( toPosition ).startsWith("B")  )
 		    {
 		    	 return false;
 		    }
@@ -345,5 +478,85 @@ public class ChessLogic
 		    return true;
 	  }
 	  
+	  
+	  private boolean isCapturedCoinHere( String fromPosition , String toPosition ) throws CustomException
+	  {
+		    
+		    
+		    if(  chessBoard.get( fromPosition ).startsWith( "W" ) && chessBoard.get( toPosition ).startsWith("B")  )
+		    {
+		    	 return true;
+		    }
+		    
+		    if( chessBoard.get( fromPosition ).startsWith( "B" ) && chessBoard.get( toPosition ).startsWith("W")  )
+		    {
+		    	 return true;
+		    }
+		    
+		    return false;
+	  }
+	  
+	  public boolean isCoinIsSame(String position,String coin) throws CustomException
+	  {
+		  if( !getCoins( position ).startsWith(coin) )
+		  {
+			 throw new CustomException( "Choose your coin only...!" );
+		  }
+		  
+		  return true;
+	  }
+	  
+	  
+
+	  public boolean isExistInList(List<String> availableMoves, String move) throws CustomException
+	  {
+			if( ! availableMoves.contains(move) )
+			{
+				  throw new CustomException( "Please enter the position only in list" );
+			}
+			
+			return true;			
+	  }
+		  
+	  public boolean emptyCheck(List<String> availableMoves) throws CustomException
+	  {
+		   if(  availableMoves.isEmpty() )
+		   {
+			     throw new CustomException( "Choose Another Coin..!" );   
+		   }
+		   
+		   return true;
+	  }
+	 
+	  public void printBoard()
+	  {
+		  int i=0;
+		  int j=8;
+		  
+		  System.out.println( "\ta\tb\tc\td\te\tf\tg\th" );
+		  
+		  Object key[]=chessBoard.keySet().toArray();
+		  
+		  while( i<chessBoard.size() )
+		  {
+			   System.out.println(
+					                (j--)+"\t"+
+					                chessBoard.get( key[i++] )+"\t"+
+		                            chessBoard.get( key[i++] )+"\t"+
+					                chessBoard.get( key[i++] )+"\t"+
+		                            chessBoard.get( key[i++] )+"\t"+
+					                chessBoard.get( key[i++] )+"\t"+
+		                            chessBoard.get( key[i++] )+"\t"+
+					                chessBoard.get( key[i++] )+"\t"+
+		                            chessBoard.get( key[i++] )
+		                         );
+		  }
+		  
+		  
+	  }
+
+
+
+
      
 }

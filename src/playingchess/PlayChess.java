@@ -15,22 +15,44 @@ public class PlayChess
            callLogic.initialSetup();
        
            callLogic.printBoard();
+           
+          
         	 
            while( true )	 
            {	
         		String whitePosition="";
         		String whiteMove="";
         		List<String> availableMovesForWhite=null;
+        		
+        		
+        		String blackPosition="";
+          	    List<String> availableMovesForBlack=null;
+          	    String blackMove="";
+          	    
         	 
         		while( true )
          		{	 
          			  try
                       {
+         				  
+
+     	    		          if( callLogic.isCheckForWhiteKingCurrentPosition()  )
+     	    		          {
+     	    		    	         System.out.println("White King is Check..");
+     	    		    	 
+     	    		    	        if( callLogic.isWhiteKingCheckMate()  && !callLogic.isEscapeForWhiteKingCurrentPosition() )
+     	    		    	        {
+     	    		    	        	System.out.println(" and CheckMate ");
+     	    		    	        	System.exit(0);
+     	    		    	        }       	    		    	 
+     	    		          }
+         				  
+         				  
         	                  System.out.println("White move");
         	                  whitePosition=input.nextLine();
         	                         	                  
         	                  availableMovesForWhite=callLogic.getMoves( whitePosition );
-        	                  
+     
         	                  if( callLogic.isCoinIsSame(whitePosition,"W") && callLogic.emptyCheck(availableMovesForWhite) )
         	                  {
         	                	  break;
@@ -75,21 +97,33 @@ public class PlayChess
         		
         		
         		
-        	    String blackPosition="";
-        	    List<String> availableMovesForBlack=null;
-        	    String blackMove="";
-        	    
+        	  
         	     
         	    while( true )
         	    {	 
         	    	  try 
         	    	  {
+        	    		  
+        	    		     
+        	    		  
+        	    		     if( callLogic.isCheckForBlackKingCurrentPosition()  )
+        	    		     {
+        	    		    	 System.out.println("Black King is Check..");
+        	    		    	 
+        	    		    	        if( callLogic.isBlackKingCheckMate()  && !callLogic.isEscapeForBlackKingCurrentPosition() )
+        	    		    	        {
+        	    		    	        	System.out.println(" and CheckMate ");
+        	    		    	        	System.exit(0);
+        	    		    	        }       	    		    	 
+        	    		     }
+        	    		  
         	                 System.out.println("Black move");
+        	                 
         	                 blackPosition=input.nextLine();
-        	     
-        	                
         	                 
         	                 availableMovesForBlack=callLogic.getMoves( blackPosition );
+        	                 
+        	               
         	                 
         	                 if( callLogic.isCoinIsSame(blackPosition,"B") && callLogic.emptyCheck(availableMovesForBlack) )
         	                 {

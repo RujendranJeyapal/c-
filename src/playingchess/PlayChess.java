@@ -36,11 +36,11 @@ public class PlayChess
                       {
          				  
 
-     	    		          if( callLogic.isCheckForWhiteKingCurrentPosition()  )
+     	    		          if( callLogic.isWhiteKingCheck()  )
      	    		          {
      	    		    	         System.out.println("White King is Check..");
      	    		    	 
-     	    		    	        if( callLogic.isWhiteKingCheckMate()  && !callLogic.isEscapeForWhiteKingCurrentPosition() )
+     	    		    	        if( callLogic.isWhiteKingCheckMate()   )
      	    		    	        {
      	    		    	        	System.out.println(" and CheckMate ");
      	    		    	        	System.exit(0);
@@ -106,11 +106,11 @@ public class PlayChess
         	    		  
         	    		     
         	    		  
-        	    		     if( callLogic.isCheckForBlackKingCurrentPosition()  )
+        	    		     if(  callLogic.isBlackKingCheck()  )
         	    		     {
         	    		    	 System.out.println("Black King is Check..");
         	    		    	 
-        	    		    	        if( callLogic.isBlackKingCheckMate()  && !callLogic.isEscapeForBlackKingCurrentPosition() )
+        	    		    	        if( callLogic.isBlackKingCheckMate() )
         	    		    	        {
         	    		    	        	System.out.println(" and CheckMate ");
         	    		    	        	System.exit(0);

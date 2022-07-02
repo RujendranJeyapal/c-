@@ -12,6 +12,8 @@ public class ChessLogic
 {
 	
 	  private LinkedHashMap<String,String> chessBoard=new LinkedHashMap<>();
+	  
+	  FileStorage callFile=new FileStorage();
 	 
 	  private int whiteKingMovement=0;
 	  
@@ -150,61 +152,100 @@ public class ChessLogic
       }
       
       
-      public void moveCoins( String source,String destination ) 
+      public boolean moveCoins( String source,String destination ) throws CustomException 
       {
     	   String coin=chessBoard.get(source);
+    	   String desCoin=chessBoard.get(destination);
     	 
-    	   chessBoard.put( source," " );
-    	   chessBoard.put(destination, coin);
-    	 
-    	   if( coin.equals("W_K") )
+
+    	   if( source.equals( "e1" )  &&  coin.equals("W_K")  &&  ( destination.equals( "g1" )  || destination.equals("c1") ) 
+    			 &&  whiteKingMovement==0  && !isCheckForGivenWhiteKing( "e1" ))
     	   {
     		   
-    		      if( whiteKingMovement==0 )
-    		      {	  
+    		       
     		    	  
     		          whiteKingPosition=destination;
     		   
-    		          if( destination.equals("g1") && whiteRookRightMovement==0  )
-    		          {
+    		           if( destination.equals("g1") && whiteRookRightMovement==0  &&
+    		        		   !isCheckForGivenWhiteKing("f1") &&  !isCheckForGivenWhiteKing("g1") )
+    		           {
+    		        	   
+    		        	   chessBoard.put( source," " );
+        		    	   chessBoard.put(destination, coin);
     		    	       chessBoard.put("h1"," ");
     		    	       chessBoard.put("f1","W_R");
     		           } 	
-    		    
-    		           if( destination.equals("c1")  &&  whiteRookLeftMovement==0 )
+    		           
+    		           else
     		           {
+    		        	   throw new CustomException( "Don't move this coin" );
+    		           }
+    		    
+    		           if( destination.equals("c1")  &&  whiteRookLeftMovement==0 &&
+    		        		    !isCheckForGivenWhiteKing("d1") &&  !isCheckForGivenWhiteKing("c1") )
+    		           {
+    		        	   chessBoard.put( source," " );
+        		    	   chessBoard.put(destination, coin);
     		               chessBoard.put("a1"," ");
    		    	           chessBoard.put("d1","W_R");
     		           }
     		           
-    		      }
+    		           else
+    		           {
+    		        	   throw new CustomException( "Don't move this coin" );
+    		           }
+    		           
+    		      
     		           ++whiteKingMovement;
     	   }
     	 
     	 
-    	   if( coin.equals("B_K") )
+    	   else if( source.equals( "e8" )  &&  coin.equals("B_K")  &&  ( destination.equals( "g8" )  || destination.equals("c8") ) 
+      			 &&  blackKingMovement==0  && !isCheckForGivenWhiteKing( "e8" ))
+      	   
     	   {
     		   
-                if( blackKingMovement==0 )
-                {	
+                	
     		           blackKingPosition=destination;
     		   
-    		           if( destination.equals("g8") && blackRookLeftMovement==0   )
-    		           {
+    		           if( destination.equals("g8") && blackRookLeftMovement==0 &&
+    		        		   !isCheckForGivenBlackKing("f8") &&  !isCheckForGivenBlackKing("g8")  )
+    		           {   		        	   
+    		        	    chessBoard.put( source," " );
+        		    	    chessBoard.put(destination, coin);
     		    	        chessBoard.put("h8"," ");
     		    	        chessBoard.put("f8","B_R");
     		           } 	
-    		    
-    		           if( destination.equals("c8")  && blackRookRightMovement==0  )
+    		           
+    		           else
     		           {
+    		        	   throw new CustomException( "Don't move this coin" );
+    		           }
+    		    
+    		           if( destination.equals("c8")  && blackRookRightMovement==0 && 
+    		        		   !isCheckForGivenBlackKing("d8") &&  !isCheckForGivenBlackKing("c8") )
+    		           {
+    		        	    chessBoard.put( source," " );
+       		    	        chessBoard.put(destination, coin);
     		    	        chessBoard.put("a8"," ");
    		    	            chessBoard.put("d8","B_R");
     		           }
-                } 
+    		           
+    		           else
+    		           {
+    		        	   throw new CustomException( "Don't move this coin" );
+    		           }
+                
     		           ++blackKingMovement;
+    	   
     	   }
     	   
-    	   
+    	   else
+    	   {
+    		       chessBoard.put( source," " );
+	    	        chessBoard.put(destination, coin);
+    	   }
+           
     	   
     	   if( source.equals( "h1" ) && coin.equals( "W_R" )  )
     	   {
@@ -229,9 +270,16 @@ public class ChessLogic
     		         ++blackRookRightMovement;
     	   }
     	   
+    	   if( desCoin.equals(" ") )
+    	   {   
+    	        callFile.recordFile(  coin+" at "+source+" has been moved to "+destination   );
+    	   }
+    	   else
+    	   {
+    		    callFile.recordFile(  coin+" at "+source+" has been captured "+desCoin+" at "+destination   );
+    	   }
     	   
-    	   
-    	   
+    	       return true;
     	 
       }
       
@@ -449,7 +497,7 @@ public class ChessLogic
 			  
 			  int row=( Integer.parseInt( position.charAt(1)+"" )+rowMoves[i] );
 			  
-			  if( row>0 && row<=8 && col>='a' && col<='h' && isCoinNotHere( position,col+""+row  ) && !isCheckForGivenKing( col+""+row )  )
+			  if( row>0 && row<=8 && col>='a' && col<='h' && isCoinNotHere( position,col+""+row  ) )
 			  {			         
 				  if( isCapturedCoinHere( position,col+""+row ) )
 			       {			    	   
@@ -471,14 +519,14 @@ public class ChessLogic
 		  int row=Integer.parseInt( position.charAt(1)+"");
 		  
 		  
-		  if(  coin.startsWith("W")  && whiteKingMovement==0  && !isCheckForGivenKing(  position  )  )
+		  if(  coin.startsWith("W")  && whiteKingMovement==0  )
 		  {
 			  if( 
 				       
 				   chessBoard.get(  (char) (col+1)+""+row ).equals(" ") &&
-				   !isCheckForGivenKing(     (char) (col+1)+""+row  )   &&
+		
 				   chessBoard.get(  (char) (col+2)+""+row ).equals(" ") &&
-				   !isCheckForGivenKing( (char) (col+2)+""+row ) &&
+				
 				   whiteRookRightMovement==0 &&
 				   chessBoard.get( "h1" ).equals("W_R")		    
 				)
@@ -489,9 +537,9 @@ public class ChessLogic
 			  
 			  if( 
 				   chessBoard.get( (char)  (col-1)+""+row ).equals(" ") &&
-				   !isCheckForGivenKing(     (char)  (col-1)+""+row  )   &&
+			
 				   chessBoard.get( (char)  (col-2)+""+row ).equals(" ") &&
-				   !isCheckForGivenKing(     (char)  (col-2)+""+row  )   &&
+		
 				   chessBoard.get( (char)  (col-3)+""+row ).equals(" ") &&
 				
 				   whiteRookLeftMovement==0 &&
@@ -505,13 +553,13 @@ public class ChessLogic
 		  }
 		  
 		  
-		  if(  coin.startsWith("B")  && blackKingMovement==0 && !isCheckForGivenKing(  position  )   )
+		  if(  coin.startsWith("B")  && blackKingMovement==0  )
 		  {
 			  if( 
 				  chessBoard.get( (char)  (col+1)+""+row ).equals(" ") &&
-				  !isCheckForGivenKing(     (char) (col+1)+""+row  )   &&
+		
 				  chessBoard.get( (char)  (col+2)+""+row ).equals(" ") &&
-				  !isCheckForGivenKing( (char) (col+2)+""+row ) &&
+	
 				  blackRookLeftMovement==0 &&
 				  chessBoard.get( "h8" ).equals("B_R")
 				    
@@ -523,9 +571,9 @@ public class ChessLogic
 			  
 			  if( 
 				   chessBoard.get(  (char) (col-1)+""+row ).equals(" ") &&
-				   !isCheckForGivenKing(     (char)  (col-1)+""+row  )   &&
+		
 				   chessBoard.get(  (char) (col-2)+""+row ).equals(" ") &&
-				   !isCheckForGivenKing(     (char)  (col-2)+""+row  )   &&
+		
 				   chessBoard.get(  (char) (col-3)+""+row ).equals(" ") &&
 				   blackRookRightMovement==0 &&
 				   chessBoard.get( "a8" ).equals("B_R")
@@ -622,10 +670,16 @@ public class ChessLogic
 	  
 	  private boolean isContainsInList( List<String> availableMoves, String move )
 	  {
-		    if(  availableMoves.contains(move) ||  availableMoves.contains(move+" can be capture") )
+		    if(  availableMoves.contains(move) ||  availableMoves.contains(move+" can be capture") ||
+		    		 availableMoves.contains(move+"--help"  ) )
 			{
 				  return true;
 			}
+		    
+		    if( move.contains("help")   )
+		    {
+		    	 return isContainsInList( availableMoves , move.charAt(0)+""+move.charAt(1)  );
+		    }
 			
 			return false;
 	  }
@@ -679,19 +733,7 @@ public class ChessLogic
 	  }
 	  
 	  
-	  private boolean isCheckForGivenKing( String kingPosition ) throws CustomException
-	  {
-		  String coin=chessBoard.get(kingPosition);
-		  
-		  if( coin.startsWith("w") )
-		  {
-			     return isCheckForGivenWhiteKing(kingPosition);
-		  }
-		  
-		  
-		       return isCheckForGivenBlackKing(kingPosition);
-		  
-	  }
+	
 	
 	  public boolean isBlackKingCheck() throws CustomException 
 	  {
@@ -809,19 +851,322 @@ public class ChessLogic
 		    	  
 		      }	 
  		    	  
-		      return true;
+		     return true;
 	  }
 	  
 	  
-	  
-	  public void applyAllMoves(String source,List<String> availableMovesForBlack) 
+	  public boolean isWhiteMoveAvailable(String source,List<String> destinations ) throws CustomException
 	  {
-			for( int i=0;i<availableMovesForBlack.size();i++  )
-			{
-				   moveCoins( source,availableMovesForBlack.get(i) );
-			}
+		  String coin=chessBoard.get(source);
+		  
+		  for( int i=0;i<destinations.size();i++  )
+		  {
+			  
+			  
+			  
+			  if( whiteMoveCheck( source,destinations.get(i) )  )
+			  {
+				  return true;
+			  }
+			 
+			     
+		  }
+		   return false;
+		  
 	  }
-
+	  
+	  
+	  public boolean whiteMoveCheck(String source, String destination ) throws CustomException  
+	  {
+		         String coin=chessBoard.get(source);
+		         
+		         String temp=whiteKingPosition;
+		         
+		       
+		      
+		         
+		         if( destination.contains(" can be capture") )
+			     {
+			    	 destination=destination.split(" ")[0];
+			     }
+			     
+			     String desCoin=chessBoard.get(destination);
+			    
+			     chessBoard.put( source , " ");
+			     
+			     chessBoard.put(destination,coin);
+			     
+			     if( coin.endsWith("K") )
+		         {
+		        	  whiteKingPosition=destination; 
+		         }
+			     
+			     if( !isWhiteKingCheck()  )
+			     {
+			    	 chessBoard.put( source ,coin );
+			    	 chessBoard.put( destination ,desCoin );
+			    	 
+			    	  if( coin.endsWith("K") )
+			    	  { 
+			    	     whiteKingPosition=temp;
+			    	  }
+			    	  
+			    	 return true;
+			     }
+			     
+			     chessBoard.put( source ,coin );
+		    	 chessBoard.put( destination ,desCoin );
+		    	 
+		    	  if( coin.endsWith("K") )
+		    	  { 
+		    	     whiteKingPosition=temp;
+		    	  }
+		      
+		    	 return false;
+	  }
+	  
+	 
+	  
+	  
+	  public boolean isBlackMoveAvailable(String source,List<String> destinations ) throws CustomException
+	  {
+		  String coin=chessBoard.get(source);
+		  
+		  for( int i=0;i<destinations.size();i++  )
+		  {
+			   if(  blackMoveCheck( source,  destinations.get(i) ) )
+			   {
+				    return true;
+			   }
+			 
+		  }
+		  
+	          	  return false;
+		 
+	  }
+	  
+	  
+	  
+	  
+	  public boolean blackMoveCheck(String source, String destination ) throws CustomException  
+	  {
+		        String coin=chessBoard.get(source);
+		      
+		        String temp=blackKingPosition;
+		      
+		        if( destination.contains(" can be capture") )
+			     {
+			    	 destination=destination.split(" ")[0];
+			     }
+			     
+			     String desCoin=chessBoard.get(destination);
+			    
+			     chessBoard.put( source , " ");
+			     
+			     chessBoard.put(destination,coin);
+			     
+			     if( coin.endsWith("K")  )
+			     {
+			    	    blackKingPosition=destination;
+			     }
+			     
+			     if( !isBlackKingCheck()  )
+			     {
+			    	 chessBoard.put( source ,coin );
+			    	 chessBoard.put( destination ,desCoin );
+			    	 
+			    	  if( coin.endsWith("K") )
+			    	  { 
+			    	     blackKingPosition=temp;
+			    	  }
+			    	 
+			    	 return true;
+			     }
+			     
+			     chessBoard.put( source ,coin );
+		    	 chessBoard.put( destination ,desCoin );
+		    	 
+		    	  if( coin.endsWith("K") )
+		    	  { 
+		    	     blackKingPosition=temp;
+		    	  }
+		      
+		    	 return false;
+	  }
+	  
+	  
+	  public boolean isAllWhiteMovesAvai() throws CustomException
+	  {
+		  for( String position:chessBoard.keySet()  )
+		  {
+			  String coin=chessBoard.get(position);
+			  
+			  if( coin.startsWith("W")  &&  isWhiteMoveAvailable( position , getMoves( position )  )   )
+			  {
+				  return true;
+			  }
+			  
+		  }
+		  
+		  return false;
+	  }
+	  
+	  
+	  public boolean isAllBlackMovesAvai() throws CustomException
+	  {
+		  for( String position:chessBoard.keySet()  )
+		  {
+			  String coin=chessBoard.get(position);
+			  
+			  if( coin.startsWith("B")  &&   isBlackMoveAvailable( position , getMoves( position )  )   )
+			  {
+				  return true;
+			  }
+			  
+		  }
+		  
+		  return false;
+	  }
+	  
+	  
+	  public List<String> getHelpForWhiteCoin( String source , String destination  ) throws CustomException
+	  {
+		  List<String> help=new ArrayList<>();
+		  	
+		  String temp=whiteKingPosition;
+		  
+		  String yourCoin=chessBoard.get( source );
+			 
+		  String desCoin=chessBoard.get( destination );
+		 
+		    chessBoard.put( source , " " );
+ 	        chessBoard.put( destination , yourCoin );
+ 	        
+ 	         if( yourCoin.endsWith("K") )
+	         { 
+	        	  whiteKingPosition=destination;
+	         }
+ 	        
+ 	        if(  isWhiteKingCheck() )
+            {
+ 	              help.add( "Your King Will be check..!" );  
+ 	              
+ 	              chessBoard.put( source , yourCoin );
+ 	              chessBoard.put( destination , desCoin  );
+ 	              
+ 	             if( yourCoin.endsWith("K") )
+ 		         { 
+ 		        	  whiteKingPosition=temp;
+ 		         }
+ 	           
+ 	              return help;
+            }
+ 	        
+		  
+	        for( String key:chessBoard.keySet() )
+		    {
+   	 
+			      String coin=chessBoard.get( key );  	      
+			        	 
+		           if( coin.startsWith("B")  )
+		           {
+ 
+		        	       List<String> moves=getMoves( key );
+		        	       
+		        	       for(  int i=0;i<moves.size();i++  )
+		        	       {
+ 
+		        	    	      if( moves.get(i).contains( destination+" can be capture" )  )
+		        	    	      {
+		        	    	    	    help.add(  "The "+coin+" in "+key+" can capture your "+yourCoin  );
+		        	    	      }
+		        	       }
+		           }
+			        	 
+		    }
+	        
+	        chessBoard.put( source , yourCoin );
+	        chessBoard.put( destination , desCoin  );
+		  
+	         if( yourCoin.endsWith("K") )
+	         { 
+	        	  whiteKingPosition=temp;
+	         }
+	        
+		    return help;
+	  }
+	  
+	  
+	  public List<String> getHelpForBlackCoin( String source , String destination  ) throws CustomException
+	  {
+		    List<String> help=new ArrayList<>();
+		    String temp=blackKingPosition;
+		  	  
+		    String yourCoin=chessBoard.get( source );
+		 
+		    String desCoin=chessBoard.get( destination );
+		 
+		    chessBoard.put( source , " " );
+   	        chessBoard.put( destination , yourCoin );
+   	        
+   	        if( yourCoin.endsWith("K") )
+   	        {
+   	        	 blackKingPosition=destination;
+   	        }
+   	        
+   	        if(  isBlackKingCheck() )
+            {
+   	              help.add( "Your King Will be check..!" );  
+   	              
+   	              chessBoard.put( source , yourCoin );
+   	              chessBoard.put( destination , desCoin  );
+   	              
+   	             if( yourCoin.endsWith("K") )
+      	         { 
+      	        	  blackKingPosition=temp;
+      	         }
+   	           
+   	              return help;
+            }
+   	        
+		  
+	        for( String key:chessBoard.keySet() )
+		    {
+     	 
+			      String coin=chessBoard.get( key );  	      
+			        	 
+		           if( coin.startsWith("W")  )
+		           {
+		        	   
+		        	       
+		        	   
+		        	       List<String> moves=getMoves( key );
+		        	       
+		        	       for(  int i=0;i<moves.size();i++  )
+		        	       {
+		        	    	     
+		        	    	     
+		        	    	      
+		        	    	      if( moves.get(i).contains( destination+" can be capture" )  )
+		        	    	      {
+		        	    	    	    help.add(  "The "+coin+" in "+key+" can capture your "+yourCoin  );
+		        	    	      }
+		        	       }
+		           }
+			        	 
+		    }
+	        
+	        chessBoard.put( source , yourCoin );
+	        chessBoard.put( destination , desCoin  );
+		  
+	         if( yourCoin.endsWith("K") )
+ 	         { 
+ 	        	  blackKingPosition=temp;
+ 	         }
+	        
+		    return help;
+	  }
+	  
 	  
 	  
 	  
@@ -854,7 +1199,7 @@ public class ChessLogic
 	  }
 
 
-
+     
 
 	
 

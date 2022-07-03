@@ -158,36 +158,32 @@ public class ChessLogic
     	   String desCoin=chessBoard.get(destination);
     	 
 
-    	   if( source.equals( "e1" )  &&  coin.equals("W_K")  &&  ( destination.equals( "g1" )  || destination.equals("c1") ) 
-    			 &&  whiteKingMovement==0  && !isCheckForGivenWhiteKing( "e1" ))
+    	   if( source.equals( "e1" )  &&  coin.equals("W_K") )
     	   {
     		   
-    		       
+    		    if( ( destination.equals( "g1" )  || destination.equals("c1") ) 
+    		    			 &&  whiteKingMovement==0  && !isCheckForGivenWhiteKing( "e1" ) ) 
+    		    { 
     		    	  
     		          whiteKingPosition=destination;
     		   
     		           if( destination.equals("g1") && whiteRookRightMovement==0  &&
     		        		   !isCheckForGivenWhiteKing("f1") &&  !isCheckForGivenWhiteKing("g1") )
     		           {
+    	
+    		        	   alterChessBoard( "h1" , " " );
+    		    	       alterChessBoard( "f1" , "W_R" );
     		        	   
-    		        	   chessBoard.put( source," " );
-        		    	   chessBoard.put(destination, coin);
-    		    	       chessBoard.put("h1"," ");
-    		    	       chessBoard.put("f1","W_R");
     		           } 	
     		           
-    		           else
-    		           {
-    		        	   throw new CustomException( "Don't move this coin" );
-    		           }
+    		          
     		    
-    		           if( destination.equals("c1")  &&  whiteRookLeftMovement==0 &&
+    		           else if( destination.equals("c1")  &&  whiteRookLeftMovement==0 &&
     		        		    !isCheckForGivenWhiteKing("d1") &&  !isCheckForGivenWhiteKing("c1") )
     		           {
-    		        	   chessBoard.put( source," " );
-        		    	   chessBoard.put(destination, coin);
-    		               chessBoard.put("a1"," ");
-   		    	           chessBoard.put("d1","W_R");
+
+    		        	   alterChessBoard( "a1" , " " );
+   		    	           alterChessBoard( "d1" , "W_R" );
     		           }
     		           
     		           else
@@ -195,40 +191,36 @@ public class ChessLogic
     		        	   throw new CustomException( "Don't move this coin" );
     		           }
     		           
-    		      
+    		    }  
     		           ++whiteKingMovement;
     	   }
     	 
     	 
-    	   else if( source.equals( "e8" )  &&  coin.equals("B_K")  &&  ( destination.equals( "g8" )  || destination.equals("c8") ) 
-      			 &&  blackKingMovement==0  && !isCheckForGivenWhiteKing( "e8" ))
+    	   else if( source.equals( "e8" )  &&  coin.equals("B_K") )
       	   
     	   {
     		   
-                	
+               if( ( destination.equals( "g8" )  || destination.equals("c8") ) 
+          			 &&  blackKingMovement==0  && !isCheckForGivenBlackKing( "e8" ) )
+               {
     		           blackKingPosition=destination;
     		   
     		           if( destination.equals("g8") && blackRookLeftMovement==0 &&
     		        		   !isCheckForGivenBlackKing("f8") &&  !isCheckForGivenBlackKing("g8")  )
     		           {   		        	   
-    		        	    chessBoard.put( source," " );
-        		    	    chessBoard.put(destination, coin);
-    		    	        chessBoard.put("h8"," ");
-    		    	        chessBoard.put("f8","B_R");
+    		        	    
+    		    	
+    		        	   alterChessBoard("h8"," ");
+   		    	           alterChessBoard("f8","B_R");
     		           } 	
-    		           
-    		           else
-    		           {
-    		        	   throw new CustomException( "Don't move this coin" );
-    		           }
     		    
-    		           if( destination.equals("c8")  && blackRookRightMovement==0 && 
+    		           else if( destination.equals("c8")  && blackRookRightMovement==0 && 
     		        		   !isCheckForGivenBlackKing("d8") &&  !isCheckForGivenBlackKing("c8") )
     		           {
-    		        	    chessBoard.put( source," " );
-       		    	        chessBoard.put(destination, coin);
-    		    	        chessBoard.put("a8"," ");
-   		    	            chessBoard.put("d8","B_R");
+    		        	    
+    		    	      
+    		        	    alterChessBoard("a8"," ");
+  		    	            alterChessBoard("d8","B_R");
     		           }
     		           
     		           else
@@ -236,15 +228,17 @@ public class ChessLogic
     		        	   throw new CustomException( "Don't move this coin" );
     		           }
                 
+               }
     		           ++blackKingMovement;
     	   
     	   }
     	   
-    	   else
-    	   {
-    		       chessBoard.put( source," " );
-	    	        chessBoard.put(destination, coin);
-    	   }
+    	 
+    		   
+    	 
+	    	        
+    	   alterChessBoard( source , " " );
+    	   alterChessBoard( destination , coin );
            
     	   
     	   if( source.equals( "h1" ) && coin.equals( "W_R" )  )
@@ -599,7 +593,7 @@ public class ChessLogic
 	  }
 	  
 	  
-	  private String getCoins( String position ) throws CustomException
+	  public String getCoins( String position ) throws CustomException
 	  {
              String coin=chessBoard.get(position);
     	  
@@ -610,6 +604,9 @@ public class ChessLogic
     	  
     	     return coin;
 	  }
+	  
+	  
+
 	  
 	  private boolean isCoinNotHere( String fromPosition , String toPosition ) 
 	  {
@@ -660,16 +657,8 @@ public class ChessLogic
 
 	  public boolean isExistInList(List<String> availableMoves, String move) throws CustomException
 	  {
-			if( ! isContainsInList( availableMoves,move) ) 
-			{
-				  throw new CustomException( "Please enter the position only in list" );
-			}
-			
-			return true;			
-	  }
-	  
-	  private boolean isContainsInList( List<String> availableMoves, String move )
-	  {
+				
+		  
 		    if(  availableMoves.contains(move) ||  availableMoves.contains(move+" can be capture") ||
 		    		 availableMoves.contains(move+"--help"  ) )
 			{
@@ -681,6 +670,16 @@ public class ChessLogic
 		    	 return isContainsInList( availableMoves , move.charAt(0)+""+move.charAt(1)  );
 		    }
 			
+		    throw new CustomException( "Please enter the position only in list" );
+	  }
+	  
+	  private boolean isContainsInList( List<String> availableMoves, String move )
+	  {
+		    if(  availableMoves.contains(move) ||  availableMoves.contains( move+" can be capture") )
+			{
+				  return true;
+			}
+
 			return false;
 	  }
 		  
@@ -782,7 +781,7 @@ public class ChessLogic
                        		    		  
 		    		    
 		    		    coin=chessBoard.get(temp);		    		    
-		    		    chessBoard.put(temp,"W_K");
+		    		    alterChessBoard( temp , "W_K" );
 		    		    
 		    	  }
 		    	  
@@ -790,7 +789,7 @@ public class ChessLogic
 		    	  {
 		    		  if( condition )
 		    		  {
-		                  chessBoard.put(temp,coin);    			  
+		    			  alterChessBoard( temp , coin );
 		    		  }
 		    		  
 		    		  return false;
@@ -799,7 +798,7 @@ public class ChessLogic
 		    	  
 		    	  if( condition )
 	    		  {
-	                  chessBoard.put(temp,coin);    			  
+		    		  alterChessBoard( temp , coin );
 	    		  }
 		    	  
 		    	  
@@ -828,7 +827,7 @@ public class ChessLogic
                        		    		  
 		    		    
 		    		    coin=chessBoard.get(temp);		    		    
-		    		    chessBoard.put(temp,"B_K");
+		    		    alterChessBoard( temp , "B_K" );
 		    		    
 		    	  }
 		    	  
@@ -837,7 +836,7 @@ public class ChessLogic
 		    	  {
 		    		  if( condition )
 		    		  {
-		                  chessBoard.put(temp,coin);    			  
+		    			  alterChessBoard( temp , coin );
 		    		  }
 		    		  
 		    		  
@@ -846,7 +845,7 @@ public class ChessLogic
 		    	  
 		    	  if( condition )
 	    		  {
-	                  chessBoard.put(temp,coin);    			  
+		    		  alterChessBoard( temp , coin );
 	    		  }
 		    	  
 		      }	 
@@ -857,7 +856,7 @@ public class ChessLogic
 	  
 	  public boolean isWhiteMoveAvailable(String source,List<String> destinations ) throws CustomException
 	  {
-		  String coin=chessBoard.get(source);
+		  
 		  
 		  for( int i=0;i<destinations.size();i++  )
 		  {
@@ -891,10 +890,10 @@ public class ChessLogic
 			     }
 			     
 			     String desCoin=chessBoard.get(destination);
-			    
-			     chessBoard.put( source , " ");
+
 			     
-			     chessBoard.put(destination,coin);
+			     alterChessBoard( source , " " );
+		 	     alterChessBoard( destination , coin );
 			     
 			     if( coin.endsWith("K") )
 		         {
@@ -903,8 +902,10 @@ public class ChessLogic
 			     
 			     if( !isWhiteKingCheck()  )
 			     {
-			    	 chessBoard.put( source ,coin );
-			    	 chessBoard.put( destination ,desCoin );
+	
+			    	  alterChessBoard( source ,coin );
+			    	  alterChessBoard( destination ,desCoin  );
+			    	 
 			    	 
 			    	  if( coin.endsWith("K") )
 			    	  { 
@@ -913,9 +914,11 @@ public class ChessLogic
 			    	  
 			    	 return true;
 			     }
+
 			     
-			     chessBoard.put( source ,coin );
-		    	 chessBoard.put( destination ,desCoin );
+			      alterChessBoard( source ,coin );
+		    	  alterChessBoard( destination ,desCoin  );
+		    	 
 		    	 
 		    	  if( coin.endsWith("K") )
 		    	  { 
@@ -930,7 +933,7 @@ public class ChessLogic
 	  
 	  public boolean isBlackMoveAvailable(String source,List<String> destinations ) throws CustomException
 	  {
-		  String coin=chessBoard.get(source);
+		 
 		  
 		  for( int i=0;i<destinations.size();i++  )
 		  {
@@ -960,10 +963,9 @@ public class ChessLogic
 			     }
 			     
 			     String desCoin=chessBoard.get(destination);
-			    
-			     chessBoard.put( source , " ");
-			     
-			     chessBoard.put(destination,coin);
+
+			     alterChessBoard( source , " " );
+		 	     alterChessBoard( destination , coin );
 			     
 			     if( coin.endsWith("K")  )
 			     {
@@ -972,8 +974,10 @@ public class ChessLogic
 			     
 			     if( !isBlackKingCheck()  )
 			     {
-			    	 chessBoard.put( source ,coin );
-			    	 chessBoard.put( destination ,desCoin );
+			    	
+			    	 
+			    	  alterChessBoard( source ,coin );
+			    	  alterChessBoard( destination ,desCoin  );
 			    	 
 			    	  if( coin.endsWith("K") )
 			    	  { 
@@ -983,15 +987,18 @@ public class ChessLogic
 			    	 return true;
 			     }
 			     
-			     chessBoard.put( source ,coin );
-		    	 chessBoard.put( destination ,desCoin );
+			
+			     
+			         alterChessBoard( source ,coin );
+		    	     alterChessBoard( destination ,desCoin  );
 		    	 
-		    	  if( coin.endsWith("K") )
-		    	  { 
-		    	     blackKingPosition=temp;
-		    	  }
+		    	 
+		    	     if( coin.endsWith("K") )
+		    	     { 
+		    	        blackKingPosition=temp;
+		    	     }
 		      
-		    	 return false;
+		    	     return false;
 	  }
 	  
 	  
@@ -1039,8 +1046,10 @@ public class ChessLogic
 			 
 		  String desCoin=chessBoard.get( destination );
 		 
-		    chessBoard.put( source , " " );
- 	        chessBoard.put( destination , yourCoin );
+	
+ 	        
+ 	        alterChessBoard( source , " " );
+ 	        alterChessBoard( destination , yourCoin );
  	        
  	         if( yourCoin.endsWith("K") )
 	         { 
@@ -1051,8 +1060,10 @@ public class ChessLogic
             {
  	              help.add( "Your King Will be check..!" );  
  	              
- 	              chessBoard.put( source , yourCoin );
- 	              chessBoard.put( destination , desCoin  );
+ 	            
+ 	              
+ 	             alterChessBoard( source , yourCoin  );
+  	             alterChessBoard( destination , desCoin );
  	              
  	             if( yourCoin.endsWith("K") )
  		         { 
@@ -1085,8 +1096,10 @@ public class ChessLogic
 			        	 
 		    }
 	        
-	        chessBoard.put( source , yourCoin );
-	        chessBoard.put( destination , desCoin  );
+	       
+	        
+	        alterChessBoard( source , yourCoin  );
+	        alterChessBoard( destination , desCoin );
 		  
 	         if( yourCoin.endsWith("K") )
 	         { 
@@ -1106,8 +1119,10 @@ public class ChessLogic
 		 
 		    String desCoin=chessBoard.get( destination );
 		 
-		    chessBoard.put( source , " " );
-   	        chessBoard.put( destination , yourCoin );
+		 
+		    
+		    alterChessBoard( source," " );
+		    alterChessBoard( destination , yourCoin );
    	        
    	        if( yourCoin.endsWith("K") )
    	        {
@@ -1118,8 +1133,10 @@ public class ChessLogic
             {
    	              help.add( "Your King Will be check..!" );  
    	              
-   	              chessBoard.put( source , yourCoin );
-   	              chessBoard.put( destination , desCoin  );
+   	         
+   	              
+   	              alterChessBoard( source , yourCoin  );
+   	              alterChessBoard( destination , desCoin );
    	              
    	             if( yourCoin.endsWith("K") )
       	         { 
@@ -1155,9 +1172,10 @@ public class ChessLogic
 		           }
 			        	 
 		    }
+	
 	        
-	        chessBoard.put( source , yourCoin );
-	        chessBoard.put( destination , desCoin  );
+	        alterChessBoard( source , yourCoin  );
+	        alterChessBoard( destination , desCoin );
 		  
 	         if( yourCoin.endsWith("K") )
  	         { 
@@ -1167,8 +1185,77 @@ public class ChessLogic
 		    return help;
 	  }
 	  
+	  public boolean isStaleMateForWhiteKing() throws CustomException
+	  {
+		    
+		     for(  String position:chessBoard.keySet()  )
+		     {
+		    	 
+		    	 String coin=chessBoard.get( position );
+		    	 
+		    	   if( coin.startsWith("W")  && ! getMoves(position).isEmpty() && isWhiteMoveAvailable( position,getMoves(position) )  )
+		    	   {
+		    		   return false;
+		    	   }
+		     }
+		   
+		     return true;
+	  }
 	  
 	  
+	  public boolean isStaleMateForBlackKing() throws CustomException
+	  {
+		    
+		     for(  String position:chessBoard.keySet()  )
+		     {
+		    	 
+		    	   String coin=chessBoard.get( position );
+		    	 
+		    	   if( coin.startsWith("B")  && ! getMoves(position).isEmpty() && isBlackMoveAvailable( position,getMoves(position) )  )
+		    	   {
+		    		   return false;
+		    	   }
+		     }
+		   
+		     return true;
+	  }
+	  
+	  
+	  public boolean isMatchDraw() throws CustomException
+	  {
+		  List<String> blackCoins=new ArrayList<>();
+		  List<String> whiteCoins=new ArrayList<>();
+		  
+		     for( String position:chessBoard.keySet()  )
+		     {
+		    	 String coin=chessBoard.get(position);
+		    	 
+		    	 if( coin.startsWith("W") )
+		    	 {
+		    		  whiteCoins.add(coin);
+		    	 }
+		    	 
+		    	 if( coin.startsWith("B") )
+		    	 {
+		    		  blackCoins.add(coin);
+		    	 }
+		    	 
+		     }
+		     
+		     
+		     if(  blackCoins.size()==1 && blackCoins.contains("B_K")  && whiteCoins.size()==1 && whiteCoins.contains("W_K")  ) 
+		     {
+		    	 throw new CustomException( "Match Drawn" );
+		     }
+		     
+		     return false;
+		     
+	  }
+	  
+	  public void alterChessBoard(String position,String coin)
+	  {
+		  chessBoard.put( position , coin );
+	  }
 	  
 	 
 	  public void printBoard()

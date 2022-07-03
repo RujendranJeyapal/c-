@@ -1,4 +1,5 @@
 package playingchess;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
@@ -50,6 +51,16 @@ public class PlayChess
 	     	    		    	        }       	    		    	 
 	     	    		          }
 	         				  
+	     	    		          else if( callLogic.isStaleMateForWhiteKing()  )
+	        	    		      {
+	        	    		    	    System.out.println("Stalemate For WhiteKing");
+	        	    		    	    return;
+	        	    		      }
+	        	    		     
+	        	    		      else if( callLogic.isMatchDraw() )
+	        	    		      {
+	        	    		    	   return;
+	        	    		      }
 	         				  
 	        	                  System.out.println("White move");
 	        	                  whitePosition=input.nextLine();
@@ -115,7 +126,14 @@ public class PlayChess
 		        	                	    continue;
 		        	                    }
 	        	                	   
-	        	                	  
+	        	                	    String coin=callLogic.getCoins( whitePosition );
+		        	                	  
+		        	                    if( coin.endsWith("P") && whitePosition.endsWith("7") && whiteMove.endsWith("8")  )
+		        	                	{
+		        	                		     pawnPromotion( whitePosition ,input , callLogic , coin );
+		        	                	}
+	        	                	    
+	        	                	    
 	        	                	    if(! callLogic.moveCoins( whitePosition, whiteMove ) )
 	        	                	    {
 	        	                	    	  continue;
@@ -156,6 +174,17 @@ public class PlayChess
 	        	    		    	        	return;
 	        	    		    	        }       	    		    	 
 	        	    		     }
+	        	    		     
+	        	    		     else if( callLogic.isStaleMateForBlackKing()  )
+	        	    		     {
+	        	    		    	   System.out.println("Stalemate For BlackKing");
+	        	    		    	   return;
+	        	    		     }
+	        	    		     
+	        	    		     else if( callLogic.isMatchDraw() )
+	        	    		     {
+	        	    		    	    return;
+	        	    		     }
 	        	    		  
 	        	                 System.out.println("Black move");
 	        	                 
@@ -170,15 +199,15 @@ public class PlayChess
 	        	                 
 	        	                 
 	        	                 if( !callLogic.isBlackMoveAvailable(blackPosition, availableMovesForBlack) )
-	        	                  {
+	        	                 {
 	        	                	   
-	        	                	    continue;
-	        	                  }
+	        	                	     continue;
+	        	                 }
 	        	               
 	        	                 
 	        	                 if( callLogic.isCoinIsSame(blackPosition,"B") && callLogic.emptyCheck(availableMovesForBlack) )
 	        	                 {
-	        	        	          break;
+	        	        	             break;
 	        	                 }
 	        	                 
 	        	                
@@ -228,7 +257,12 @@ public class PlayChess
 		        	                	  continue;
 		        	                  }
 	        	                	  
+	        	                	  String coin=callLogic.getCoins(blackPosition);
 	        	                	  
+	        	                	  if( coin.endsWith("P") && blackPosition.endsWith("2") && blackMove.endsWith("1")  )
+	        	                	  {
+	        	                		     pawnPromotion( blackPosition ,input , callLogic , coin );
+	        	                	  }
 	        	                     
 	        	                	  if( ! callLogic.moveCoins( blackPosition, blackMove) )
 	        	                	  {
@@ -255,6 +289,7 @@ public class PlayChess
 	           
 	        }
 	        
+	       
 	        
 	        static void printHelp(  List<String> help )
 	        {
@@ -273,7 +308,100 @@ public class PlayChess
     	    			  System.out.println(help.get(i));
     	    		  }
     	    	}
-	     }
+	        }
+	        
+	        static void pawnPromotion( String position , Scanner input , ChessLogic callLogic ,String coin)
+	        {
+	        	boolean condition=true;
+	        	
+	        	
+	        	
+	        	
+	        	while( condition )
+	        	{
+	        	     System.out.println("Press 1--> Queen\nPress 2--> Kinght\nPress 3--> Bishop\nPress 4-->Rook");
+	        	     
+	        	     
+	        	     int option=0;
+	        	     
+	        	     try
+	        	     {
+	        	         option=input.nextInt();
+	        	         input.nextLine();
+	        	     }
+	        	     catch( InputMismatchException ex )
+	        	     {
+	        	    	 System.out.println("Enter Number Only");
+	        	     }
+	        	     
+  	        	     switch(  option )
+	        	     {
+	        	          case  1:
+	        	        	  
+	        	        	   if(  coin.startsWith("W")  )
+	        	               {
+	        	        	        callLogic.alterChessBoard(position,"W_Q");
+	        	               }  
+	        	        	   
+	        	        	   else
+	        	        	   {
+	        	        		   callLogic.alterChessBoard(position,"B_Q");
+	        	        	   }
+	        	        	   condition=false;
+	        	        	   break;
+	        	        	   
+	        	          case 2:
+	        	        	  
+	        	        	   if(  coin.startsWith("W")  )
+	        	               {
+	        	        	        callLogic.alterChessBoard(position,"W_N");
+	        	               }  
+	        	        	   
+	        	        	   else
+	        	        	   {
+	        	        		   callLogic.alterChessBoard(position,"B_N");
+	        	        	   }
+	        	        	   condition=false;
+	        	        	   break;
+	        	        	   
+	        	        	   
+	        	          case 3:
+	        	        	  
+	        	        	   if(  coin.startsWith("W")  )
+	        	               {
+	        	        	        callLogic.alterChessBoard(position,"W_B");
+	        	               }  
+	        	        	   
+	        	        	   else
+	        	        	   {
+	        	        		   callLogic.alterChessBoard(position,"B_B");
+	        	        	   }
+	        	        	   condition=false;
+	        	        	   break;   
+	        	        	   
+	        	          case 4:
+	        	        	  
+	        	        	   if(  coin.startsWith("W")  )
+	        	               {
+	        	        	        callLogic.alterChessBoard(position,"W_R");
+	        	               }  
+	        	        	   
+	        	        	   else
+	        	        	   {
+	        	        		   callLogic.alterChessBoard(position,"B_R");
+	        	        	   }
+	        	        	   condition=false;
+	        	        	   break;   
+	        	        	   
+	        	        default:
+	        	        	
+	        	        	   System.out.println("Choose Given Number Only");
+	        	        	   break;
+	        	        	  
+	        	     }
+	        	 
+	        	}
+	        }
 	        
 }
 

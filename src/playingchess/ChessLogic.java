@@ -659,15 +659,14 @@ public class ChessLogic
 	  {
 				
 		  
-		    if(  availableMoves.contains(move) ||  availableMoves.contains(move+" can be capture") ||
-		    		 availableMoves.contains(move+"--help"  ) )
-			{
+		    if(  availableMoves.contains(move) ||  availableMoves.contains(move+" can be capture")  )
+		    {
 				  return true;
-			}
+	        }
 		    
 		    if( move.contains("help")   )
 		    {
-		    	 return isContainsInList( availableMoves , move.charAt(0)+""+move.charAt(1)  );
+		    	 return isExistInList( availableMoves , move.charAt(0)+""+move.charAt(1)  );
 		    }
 			
 		    throw new CustomException( "Please enter the position only in list" );

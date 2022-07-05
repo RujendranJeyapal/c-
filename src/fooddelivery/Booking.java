@@ -10,7 +10,8 @@ public class Booking
 	      private DeliveryExecutive executive;
 	      private List<Customer> customers=new ArrayList<>();
 	      private String restaurant;
-	      private String destinationPoint;	   
+	      private String destinationPoint;	  
+	      private String parkingTime;
 	      private String deliveryTime;
 	      private double deliveryCharge;
 	      private double allowance;
@@ -20,7 +21,8 @@ public class Booking
 	      
 	      
 	      
-		  public Booking(int bookingId, DeliveryExecutive executive, Customer customers, String restaurant  ,String destinationPoint,
+		  public Booking(int bookingId, DeliveryExecutive executive, Customer customers, String restaurant,String parkingTime,
+				  String destinationPoint,
 				String deliveryTime, double deliveryCharge, double allowance) 
 		  {
 			  
@@ -29,6 +31,7 @@ public class Booking
 			this.customers.add(customers);
 			this.restaurant=restaurant;
 			this.destinationPoint = destinationPoint;
+			this.parkingTime=parkingTime;
 			this.deliveryTime = deliveryTime;
 			this.deliveryCharge = deliveryCharge;
 			this.allowance = allowance;
@@ -48,10 +51,7 @@ public class Booking
 		  }
 
 		  
-		  public void setDeliveryTime(String deliveryTime) 
-		  {
-			    this.deliveryTime = deliveryTime;
-		  }
+		
 
 
 		  public int getBookingId() 
@@ -71,7 +71,11 @@ public class Booking
 			   return destinationPoint;
 		  }
 
-		  
+		  public String getParkingTime() 
+		  {
+			    return parkingTime;
+		  }
+
 		  public String getDeliveryTime() 
 		  {
 			    return deliveryTime;
@@ -104,7 +108,7 @@ public class Booking
 		  {
 			  
 			   return bookingId + "\t\t" + executive.getExecutive()+ "\t\t" +restaurant
-					+ "\t\t" + destinationPoint + "\t\t" + customers.size()+"\t\t"+customers.get( customers.size()-1 ).getTime() +"\t\t"
+					+ "\t\t" + destinationPoint + "\t\t" + customers.size()+"\t\t"+parkingTime +"\t\t"
 					+deliveryTime+"\t\t"+deliveryCharge ;
 		  }
 	      

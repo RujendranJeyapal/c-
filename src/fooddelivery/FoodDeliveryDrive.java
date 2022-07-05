@@ -66,13 +66,15 @@ public class FoodDeliveryDrive
 		    	 throw new CustomException("All Executives are Busy"); 
 		     }
 		     
+		     String parkingTime=getTimeFormat( convertToMin( customer.getTime() )+15  );
+		     
 		     String returnTime=getTimeFormat( convertToMin( customer.getTime() )+45  );
 		     
 		     executive.setAlloances(10);
 		     executive.setDeliveryCharges(50);
 		     executive.setFreeTime(  returnTime  );
 		     
-		     Booking book=new Booking( bookingId , executive,  customer , restaurant , destination,returnTime
+		     Booking book=new Booking( bookingId++ , executive,  customer , restaurant ,parkingTime, destination,returnTime
 		    		 ,50,10);
 		     
 		     callCache.addBooking(book);
@@ -90,10 +92,10 @@ public class FoodDeliveryDrive
 		   {
 			   Booking book=allBookings.get( bookingId );
 			   
-			   String time=book.getDeliveryTime();
+			   String time=book.getParkingTime();
 			   
 			   if( 
-					      ( convertToMin( time )-convertToMin( customer.getTime() )<=15) 
+					      ( convertToMin( customer.getTime())-convertToMin( time )<=15) 
 					      &&  destination.equals( book.getDestinationPoint() ) 
 					      &&  restaurant.equals(  book.getRestaurant() )
 					      &&  book.getOrder()<=5  
@@ -105,13 +107,7 @@ public class FoodDeliveryDrive
 				   DeliveryExecutive executive=book.getExecutive();
 				   
 				   executive.setDeliveryCharges(5);
-				   
-				   String returnTime=getTimeFormat( convertToMin( customer.getTime() )+45  );
-				   
-				   book.setDeliveryTime( returnTime );
-				   
-				   executive.setFreeTime(returnTime);
-				   
+
 				   
 				   
 				   return executive.getExecutive();
@@ -130,6 +126,11 @@ public class FoodDeliveryDrive
 		    
 		    int hour=Integer.parseInt( array[0]  );
 		    
+		    if( hour==12 )
+		    {  
+		    	  hour=0;
+		    }
+		    
 		    String temp[]=array[1].split(" ");
 		    
 		    int mins=(hour*60)+ Integer.parseInt( temp[0] );
@@ -146,19 +147,31 @@ public class FoodDeliveryDrive
 	  private String getTimeFormat( int mins )
 	  {
 		    int hour=mins/60;
-		    int min=mins%60;
+		    Object min=mins%60;
 		    
+		    int temp=hour;
 		    
-		    
-		    while(  hour>12  )
+		    if( temp==0 )
 		    {
-		    	hour-=12;
+		    	temp=12;
+		    }
+		    
+		    while(  temp>12  )
+		    {
+		    	temp-=12;
 		    	
 		    }
 		    
-		    String time=hour+":"+min;
+		   
 		    
-		    if(  mins>720  && mins<1440 )
+		    if((int) min<10 )
+		    {
+		    	min=0+""+min;
+		    }
+		    
+		    String time=temp+":"+min;
+		    
+		    if(  ( mins>=720 && mins<1440  )    )
 		    {
 		    	time+=" PM";
 		    }

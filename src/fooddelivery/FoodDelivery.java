@@ -52,6 +52,7 @@ public class FoodDelivery
 		          try
 		          {
 		                option=input.nextInt();
+		                input.nextLine();
 		          }
 		          catch( InputMismatchException ex )
 		          {
@@ -121,7 +122,7 @@ public class FoodDelivery
 		    	            
 		           case 2:
 		        	   
-		        	       System.out.println("Trip\t\tExecutive\tRestaurant\tDestination\tOrders\tPickUp\tDelivery\tDelivery Charge");
+		        	       System.out.println("Trip\t\tExecutive\tRestaurant\tDestination\tOrders\t\tPickUp\t\t\tDelivery\tDelivery Charge");
 		    	            
 		        	       Map<Integer,Booking> allBookings=callDrive.getAllBookings();
 		        	       
